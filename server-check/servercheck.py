@@ -1,10 +1,12 @@
 import shutil
 import smtplib, ssl
 import socket
-
 import sys
 
 from servercheckcfg import config
+
+# get arguments parameters
+check_mode = sys.argv[1]
 
 # get configuration parameters
 disk_to_check = config['disk_to_check']
@@ -25,7 +27,7 @@ for disk in disk_to_check:
     total, used, free = shutil.disk_usage(disk)
     used_perc = round(used / total * 100)
     # check usage limit
-    if used_perc > disk_used_perc_limit:
+    if check_mode == 'report' or used_perc > disk_used_perc_limit:
         # usage over limit
         error_messages.append('Il disco ' + disk + ' e\' occupato al ' + str(used_perc) + '%.')
 
