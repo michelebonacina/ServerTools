@@ -16,7 +16,8 @@ mail_from = config['mail_from']
 mail_to = config['mail_to']
 
 # prepare error message
-error_messages = []
+detail_messages = []
+esito = ''
 
 # backup dbs
 for db in db_to_backup:
@@ -29,16 +30,25 @@ for db in db_to_backup:
     # backup db
     for db_name in db_names:
         # prepare dump name
-        today = datetime.today()
-        dump_name = today.strftime('%y%m%d') + '_' + server + '_' + db_name
+        start_time = datetime.now()
+        dump_name = start_time.strftime('%Y%m%d') + '_' + server + '_' + db_name + '.sql.gz'
         # dump db
-        print(dump_name)
+        result = os.system('mysqldump -u ' + user + ' -p' + password + ' -h ' + server + ' -P ' + port + ' ' + db_name + ' | gzip > ' + export_dir + '/' + dump_name)
+        # prepare result message
+        end_time = datetime.now()
+        message = 'Backup del db ' + db_name + ' dal server ' + server + '.'
+        if result != 0:
+            # error
+            esito = 'ERRORE!!!'
+            detail_messages.append(message + ' ERRORE!!!!')
+        else:
+            # success
+            esito = 'OK'
+            detail_messages.append(message + ' OK!')
+        detail_messages.append('Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') + ' - Dimensione: ' + str(os.path.getsize(export_dir + '/' + dump_name)) + '\n')
 
-
-
-
-
-if len(error_messages) > 0:
+# send email
+if len(detail_messages) > 0:
     # initialize ssl context
     context = ssl.create_default_context()
     # send email
@@ -47,12 +57,10 @@ if len(error_messages) > 0:
         server.login(mail_server_user, mail_server_password)
         # prepare mail message
         message = []
-        message.append('Subject: [' + socket.gethostname() + '] Stato occupazione dei dischi')
-        message.append('Controllo dello spazio su disco del server ' + socket.gethostname())
-        message += error_messages
+        message.append('Subject: [' + socket.gethostname() + '] Backup dei database - Esito: ' + esito)
+        message.append('Backup dei database del server ' + socket.gethostname() + '\n')
+        message += detail_messages
         message.append('')
 
         # send email
         server.sendmail(mail_from, mail_to, '\n'.join(message))
-
-
