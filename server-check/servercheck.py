@@ -6,7 +6,9 @@ import sys
 from servercheckcfg import config
 
 # get arguments parameters
-check_mode = sys.argv[1]
+check_mode = ''
+if len(sys.argv) > 1:
+    check_mode = sys.argv[1]
 
 # get configuration parameters
 disk_to_check = config['disk_to_check']
