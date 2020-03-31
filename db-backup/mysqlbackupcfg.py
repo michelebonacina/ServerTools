@@ -9,6 +9,8 @@ config = {
         }
     ],
     'export_dir': '',
+    'filename_prefix': '',
+    'backup_file_history': 3,
     'mail_server': '',
     'mail_server_port': '',
     'mail_server_user': '',
