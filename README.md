@@ -86,14 +86,21 @@ The list of the database to backup.
 It's a standard array of objects which one is a database to backup.
 
 Each object contains:
-. server: database server name or IP
-. port: database server port
-. user: database user name
-. password: database user password
-. db_names: a standard array of string with the name of the single database to backup
+- server: database server name or IP
+- port: database server port
+- user: database user name
+- password: database user password
+- db_names: a standard array of string with the name of the single database to backup
 
-#### export_dir'
+#### export_dir
 The directory where the database dump file will be saved
+
+#### filename_prefix
+The prefix for the file name, next to the current date. 
+
+#### backup_file_history
+The number of days of the backup history. Each time a backup starts, checks for backup files older the this values 
+(based on the backup date in the file name) and deletes them.
 
 #### mail_server
 The mail server name or IP address.
