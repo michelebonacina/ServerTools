@@ -9,11 +9,11 @@ Needed pyhon 3.x or more
 ### servercheck.py
 The tool main program.
 
-`python3 servercheck`
+`python3 servercheck.py`
 
 Called without params check disks occupation and send an email only if one of them is over quota.
 
-`python3 servercheck report`
+`python3 servercheck.py report`
 
 Called with report parameter send and email with the occupation status of each discs configured.
 
@@ -71,7 +71,7 @@ Needed pyhon 3.x or more
 ### mysqlbackup.py
 Backup main program.
 
-`python3 mysqlbackup`
+`python3 mysqlbackup.py`
 
 For each database in config file calls a mysqldump and stores the gzipped data into the export directory.
 
