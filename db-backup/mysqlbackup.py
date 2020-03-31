@@ -84,6 +84,8 @@ if len(detail_messages) > 0:
         # prepare mail message
         message = []
         message.append('Subject: [' + socket.gethostname() + '] Backup dei database - Esito: ' + esito)
+        message.append('From: ' + mail_from)
+        message.append('To: ' + ', '.join(mail_to))
         message.append('Backup dei database del server ' + socket.gethostname() + '\n')
         message += detail_messages
         message.append('')
