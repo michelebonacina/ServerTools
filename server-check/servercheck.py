@@ -43,6 +43,8 @@ if len(error_messages) > 0:
         # prepare mail message
         message = []
         message.append('Subject: [' + socket.gethostname() + '] Stato occupazione dei dischi')
+        message.append('From: ' + mail_from)
+        message.append('To: ' + ', '.join(mail_to))
         message.append('Controllo dello spazio su disco del server ' + socket.gethostname())
         message += error_messages
         message.append('')
