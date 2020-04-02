@@ -49,8 +49,9 @@ if (os.path.exists(export_dir) and os.path.isdir(export_dir)):
             # prepare dump name
             start_time = datetime.now()
             dump_name = start_time.strftime('%Y%m%d') + '_' + filename_prefix + '_' + server + '_' + db_name + '.sql.gz'
+            log_name = start_time.strftime('%Y%m%d') + '_' + filename_prefix + '_' + server + '_' + db_name + '.log'
             # dump db
-            result = os.system('mysqldump -u ' + user + ' -p' + password + ' -h ' + server + ' -P ' + port + ' ' + db_name + ' | gzip > ' + export_dir + '/' + dump_name)
+            result = os.system('mysqldump -u ' + user + ' -p' + password + ' -h ' + server + ' -P ' + port + ' --log-error=' + export_dir + '/' + log_name + ' ' + db_name + ' | gzip > ' + export_dir + '/' + dump_name)
             # prepare result message
             end_time = datetime.now()
             message = 'Backup del db ' + db_name + ' dal server ' + server + '.'
