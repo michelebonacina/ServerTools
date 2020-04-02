@@ -1,9 +1,7 @@
 import os
 import smtplib, ssl
 import socket
-from datetime import datetime
-
-import sys
+from datetime import date, datetime
 
 from mysqlbackupcfg import config
 
@@ -26,7 +24,7 @@ esito = ''
 if (os.path.exists(export_dir) and os.path.isdir(export_dir)):
     # export dir exists
     # remove old file from export dir ####
-    current_date = int(datetime.now().strftime('%Y%m%d'))
+    current_date = date.today()
     for item in os.listdir(export_dir):
         # check dir content
         item_path = export_dir + '/' + item
@@ -34,13 +32,10 @@ if (os.path.exists(export_dir) and os.path.isdir(export_dir)):
             # is a file
             if (item.find('_' + filename_prefix + '_') != -1):
                 # is a mysql backup file
-                backup_date_str = item[:8]
-                if (backup_date_str.isdecimal()):
-                    # is the backup date
-                    backup_date = int(backup_date_str)
-                    if (backup_date < current_date - backup_file_history):
-                        # the file is old, remove it
-                        os.remove(item_path)
+                file_date = date.fromtimestamp(os.path.getctime(item_path))
+                if ((current_date - file_date).days > backup_file_history):
+                    # the file is old, remove it
+                    os.remove(item_path)
     # backup dbs ####
     for db in db_to_backup:
         # get db data
