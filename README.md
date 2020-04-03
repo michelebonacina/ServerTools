@@ -1,6 +1,9 @@
 # Server Tools
 A set of tools for managing and monitoring a server state.
 
+[Server check](# Server check)
+[Server check](# Server check)
+
 ## Server check
 Checks server disk space free and sends an email if over quota.
 
