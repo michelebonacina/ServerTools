@@ -1,11 +1,11 @@
 # Server Tools
 A set of tools for managing and monitoring a server state.
 
-[Server check](## Server check)
+[Server check](##server-check)
 
-[DB mySQL Backup](## DB mySQL Backup)
+[DB mySQL Backup](##db-mysql-backup)
 
-[Git Mirror](# Git Mirror)
+[Git Mirror](#git-mirror)
 
 ## Server check
 Checks server disk space free and sends an email if over quota.
