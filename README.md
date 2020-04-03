@@ -206,7 +206,7 @@ For each repo in config file executes a fetch from master and a push to slave.
 
 > At the moment the first step (master clone, slave config) have to be done manually
 
-## gitmirror.py
+## gitmirrorcfg.py
 
 Mirroring configuration file.
 
