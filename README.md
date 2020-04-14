@@ -225,5 +225,7 @@ Git executable program path. If git if already in you system PATH environment yo
 The list of the repositories to synchronize.
 
 Each object contains:
-- `name`: the name of the repo, only for visualization purpuse
-- `path`: local path where the repo mirror is cloned
+- `name`: name of the repo, added to _path_ for full repo pathname
+- `path`: local path where the repo mirror is cloned. the repo _name_ is added to this path for full repo pathname
+- `source`: source git repo URL, used for cloning repo if not exists locally
+- `destination`: destination git repo URL, used for configuring _push_ repo
