@@ -3,7 +3,9 @@ config = {
     'repositories': [
         {
             'name': '',
-            'path': ''
+            'path': '',
+            'source': '',
+            'destination': ''
         }
    ]
 }
