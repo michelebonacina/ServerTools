@@ -1,7 +1,15 @@
 import subprocess
-import sys, os
+import sys
+import os
 
 from gitmirrorcfg import config
+
+# get command line parameters
+only_new = False
+
+for i in range(len(sys.argv) - 1):
+    if sys.argv[i + 1] == '--only-new':
+        only_new = True
 
 # import parameters
 git_exe = config['git_executable_path']
@@ -22,14 +30,17 @@ for repository in repositories:
     source = repository['source']
     destination = repository['destination']
     print('Repo: ' + name, end='', flush=True)
+    is_new = False
     try:
         if (not os.path.exists(path + '/' + name)):
             # path not exist
+            is_new = True
             print(' - Clone: ', end='', flush=True)
             # clone repository
             source_clone[3] = source
             source_clone[4] = name
-            git = subprocess.Popen(source_clone, cwd=path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            git = subprocess.Popen(
+                source_clone, cwd=path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             (git_status, git_error) = git.communicate()
             if git.poll() == 0:
                 # clone executed
@@ -37,29 +48,35 @@ for repository in repositories:
                 print(' - Config: ', end='', flush=True)
                 # set new destination
                 source_destination[5] = destination
-                git = subprocess.Popen(source_destination, cwd=path_project, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                git = subprocess.Popen(source_destination, cwd=path_project,
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                 (git_status, git_error) = git.communicate()
                 if git.poll() == 0:
                     print('OK', end='', flush=True)
-                else: 
+                else:
                     raise IOError()
             else:
                 raise IOError()
         # fetch from source
-        print(' - Fetch: ', end='', flush=True)
-        git = subprocess.Popen(source_fetch, cwd=path_project, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        (git_status, git_error) = git.communicate()
-        if git.poll() == 0:
-            # fetch executed
-            print('OK', end='', flush=True)
-            print(' - Push: ', end='', flush=True)
-            git = subprocess.Popen(destination_push, cwd=path_project, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        if (not only_new or (only_new and is_new)):
+            print(' - Fetch: ', end='', flush=True)
+            git = subprocess.Popen(source_fetch, cwd=path_project,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             (git_status, git_error) = git.communicate()
             if git.poll() == 0:
-                print('OK')
+                # fetch executed
+                print('OK', end='', flush=True)
+                print(' - Push: ', end='', flush=True)
+                git = subprocess.Popen(destination_push, cwd=path_project,
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                (git_status, git_error) = git.communicate()
+                if git.poll() == 0:
+                    print('OK')
+                else:
+                    raise IOError()
             else:
                 raise IOError()
         else:
-            raise IOError()
+            print(' - Excluded: OK')
     except:
         print('ERROR: ', sys.exc_info()[0])
