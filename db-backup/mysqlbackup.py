@@ -61,8 +61,15 @@ if (os.path.exists(export_dir) and os.path.isdir(export_dir)):
                 detail_messages.append(message + ' ERRORE!!!!')
             else:
                 # success
-                esito = 'OK'
-                detail_messages.append(message + ' OK!')
+                # check log file
+                log_size = os.path.getsize(export_dir + '/' + log_name)
+                if log_size > 0:
+                    # error
+                    esito = 'ERRORE!!!'
+                    detail_messages.append(message + ' ERRORE!!!! Controllare file di log.')
+                else: 
+                    esito = 'OK'
+                    detail_messages.append(message + ' OK!')
             detail_messages.append('Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') + ' - Dimensione: ' + str(os.path.getsize(export_dir + '/' + dump_name)) + '\n')
 else:
     # export dir not finded
