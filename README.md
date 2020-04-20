@@ -228,4 +228,4 @@ Each object contains:
 - `name`: name of the repo, added to _path_ for full repo pathname
 - `path`: local path where the repo mirror is cloned. the repo _name_ is added to this path for full repo pathname
 - `source`: source git repo URL, used for cloning repo if not exists locally
-- `destination`: destination git repo URL, used for configuring _push_ repo
+- `destination`: destination git repo URL, used for configuring _push_ repo. if setted 'off' repo is only fetched from source
