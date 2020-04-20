@@ -47,14 +47,17 @@ for repository in repositories:
                 print('OK', end='', flush=True)
                 print(' - Config: ', end='', flush=True)
                 # set new destination
-                source_destination[5] = destination
-                git = subprocess.Popen(source_destination, cwd=path_project,
-                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                (git_status, git_error) = git.communicate()
-                if git.poll() == 0:
-                    print('OK', end='', flush=True)
+                if destination.lower() != 'off':
+                    source_destination[5] = destination
+                    git = subprocess.Popen(source_destination, cwd=path_project,
+                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                    (git_status, git_error) = git.communicate()
+                    if git.poll() == 0:
+                        print('OK', end='', flush=True)
+                    else:
+                        raise IOError()
                 else:
-                    raise IOError()
+                    print('OFF', end='', flush=True)
             else:
                 raise IOError()
         # fetch from source
@@ -67,13 +70,16 @@ for repository in repositories:
                 # fetch executed
                 print('OK', end='', flush=True)
                 print(' - Push: ', end='', flush=True)
-                git = subprocess.Popen(destination_push, cwd=path_project,
-                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                (git_status, git_error) = git.communicate()
-                if git.poll() == 0:
-                    print('OK')
+                if destination.lower() != 'off':
+                    git = subprocess.Popen(destination_push, cwd=path_project,
+                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                    (git_status, git_error) = git.communicate()
+                    if git.poll() == 0:
+                        print('OK')
+                    else:
+                        raise IOError()
                 else:
-                    raise IOError()
+                    print('OFF')
             else:
                 raise IOError()
         else:
