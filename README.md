@@ -138,79 +138,23 @@ The email address list pf the destination users.
 
 ## Git Mirror
 
-Cloning a git repo from a git provider to another and maintain it synchronized
-
-## Use case
-
-You've got a git repo in github and you want to create and synchronize a clone in gitlab. 
-
-> The replica act as a master/slave system: every modification to the slave will be overritten during sinchronization.
-
-Master repo `git@github.com:johndoe/helloworld.git`
-
-Slave repo  `git@gitlab.com:john.doe/isthesame.git`
-
-> The two repositories can have different names
-
-> In this sample I use ssh connections. you can also use https connection, but with ssh you can run commands without login and password
-
-## How-to
-
-### Setting up the mirroring repo
-
-Update you master repo. 
-
-On your pc create a base folder where cloning the master repo and open a shell in this directory.
-
-Execute:
-
-Clone the master repo for mirroring
-
-`git clone --mirror git@github.com:johndoe/helloworld.git`
-
-Enter into repo dir. The directory structure is different from standard git local repo.
-
-`cd helloworld.git`
-
-Change push repo setting the slave one
-
-`git set-url --push origin git@gitlab.com:john.doe/isthesame.git`
-
-Now this repo is configured for mirroring
-
-### Sync mirrored repo
-
-Update you master repo. 
-
-On your pc enter the base folder where cloned the repo.
-
-Execute:
-
-Enter into repo dir.
-
-`cd helloworld.git`
-
-Download data from master repo
-
-`git fetch -p origin`
-
-Upload data to slave repo
-
-`git push --mirror`
-
-The slave repo is now synchronized with master
+Cloning a git repo from a git provider to another and maintain it synchronized.
 
 ## gitmirror.py
 
 Mirroring main program.
 
-`python3 gitmirror.py`
+`python3 gitmirror.py [--help] [--only-new] [--send-mail]`
+
+- `--help` shows usage infos
+- `--only-new` download only new repository, which are not saved on local disk
+- `--send-mail` send a report email at the end of the synchronization
 
 For each repo in config file executes a fetch from master and a push to slave.
 
 > All changes made directly to slave repo will be overwritten
 
-> At the moment the first step (master clone, slave config) have to be done manually
+> Access to remote repository via ssh using public/private key pair to avoid interactive user password
 
 ## gitmirrorcfg.py
 
@@ -228,4 +172,32 @@ Each object contains:
 - `name`: name of the repo, added to _path_ for full repo pathname
 - `path`: local path where the repo mirror is cloned. the repo _name_ is added to this path for full repo pathname
 - `source`: source git repo URL, used for cloning repo if not exists locally
-- `destination`: destination git repo URL, used for configuring _push_ repo. if setted 'off' repo is only fetched from source
+- `destination`: destination git repo URL, used for configuring _push_ repo. if setted to 'off' repo is only fetched from source
+
+##### mail_server
+The mail server name or IP address.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail_server_port
+The port of the mail server.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail_server_user
+The username used for mail server authentication.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail_server_password
+The password user for mail server authentication.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail_from
+The email address of the sender.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail_to
+The email address list pf the destination users.
