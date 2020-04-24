@@ -1,8 +1,10 @@
 import subprocess
 import sys
 import os
-import smtplib, ssl
+import smtplib
+import ssl
 import socket
+from pathlib import Path
 from datetime import date, datetime
 
 from gitmirrorcfg import config
@@ -27,18 +29,18 @@ for i in range(len(sys.argv) - 1):
 # import parameters
 git_exe = config['git_executable_path']
 repositories = config['repositories']
-
-# git mirroring commands
-source_clone = [git_exe, 'clone', '--mirror', '', '']
-source_destination = [git_exe, 'remote', 'set-url', '--push', 'origin', '']
-source_fetch = [git_exe, 'fetch', '-p', 'origin']
-destination_push = [git_exe, 'push', '--mirror']
 mail_server = config['mail_server']
 mail_server_port = config['mail_server_port']
 mail_server_user = config['mail_server_user']
 mail_server_password = config['mail_server_password']
 mail_from = config['mail_from']
 mail_to = config['mail_to']
+
+# git mirroring commands
+source_clone = [git_exe, 'clone', '--mirror', '', '']
+source_destination = [git_exe, 'remote', 'set-url', '--push', 'origin', '']
+source_fetch = [git_exe, 'fetch', '-p', 'origin']
+destination_push = [git_exe, 'push', '--mirror']
 
 # prepare result message
 detail_messages = []
@@ -56,6 +58,9 @@ for repository in repositories:
     print('Repo: ' + name, end='', flush=True)
     detail_message = 'Repo: ' + name
     is_new = False
+    # create path
+    path_dir = Path(path)
+    path_dir.mkdir(parents=True, exist_ok=True)
     try:
         if (not os.path.exists(path + '/' + name)):
             # path not exist
@@ -78,7 +83,7 @@ for repository in repositories:
                 if destination.lower() != 'off':
                     source_destination[5] = destination
                     git = subprocess.Popen(source_destination, cwd=path_project,
-                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                     (git_status, git_error) = git.communicate()
                     if git.poll() == 0:
                         print('OK', end='', flush=True)
@@ -105,7 +110,7 @@ for repository in repositories:
                 detail_message += ' - Push: '
                 if destination.lower() != 'off':
                     git = subprocess.Popen(destination_push, cwd=path_project,
-                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                     (git_status, git_error) = git.communicate()
                     if git.poll() == 0:
                         print('OK')
@@ -122,7 +127,7 @@ for repository in repositories:
             detail_message += ' - Excluded: OK'
     except:
         print('ERROR: ', sys.exc_info()[0])
-        detail_message += ' - ERROR: ' + sys.exc_info()[0]
+        detail_message += ' - ERROR'
         esito = 'ERROR'
     # adde message to messages list
     detail_messages.append(detail_message)
