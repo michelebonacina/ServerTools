@@ -156,6 +156,8 @@ For each repo in config file executes a fetch from master and a push to slave.
 
 > Access to remote repository via ssh using public/private key pair to avoid interactive user password
 
+> This tools requires GitPython lib
+
 ## gitmirrorcfg.py
 
 Mirroring configuration file.

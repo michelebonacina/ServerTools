@@ -1,18 +1,17 @@
-import subprocess
 import sys
-import os
 import smtplib
 import ssl
 import socket
 from pathlib import Path
 from datetime import date, datetime
 
+import git
+
 from gitmirrorcfg import config
 
 # get command line parameters
 only_new = False
 send_mail = False
-
 for i in range(len(sys.argv) - 1):
     if sys.argv[i + 1] == '--help':
         print('Git Mirror - GIT repository replica')
@@ -36,12 +35,6 @@ mail_server_password = config['mail_server_password']
 mail_from = config['mail_from']
 mail_to = config['mail_to']
 
-# git mirroring commands
-source_clone = [git_exe, 'clone', '--mirror', '', '']
-source_destination = [git_exe, 'remote', 'set-url', '--push', 'origin', '']
-source_fetch = [git_exe, 'fetch', '-p', 'origin']
-destination_push = [git_exe, 'push', '--mirror']
-
 # prepare result message
 detail_messages = []
 esito = 'OK'
@@ -52,9 +45,9 @@ for repository in repositories:
     # get repository data
     name = repository['name']
     path = repository['path']
-    path_project = path + '/' + name
     source = repository['source']
     destination = repository['destination']
+    repoPath = path + '/' + name
     print('Repo: ' + name, end='', flush=True)
     detail_message = 'Repo: ' + name
     is_new = False
@@ -62,57 +55,43 @@ for repository in repositories:
     path_dir = Path(path)
     path_dir.mkdir(parents=True, exist_ok=True)
     try:
-        if (not os.path.exists(path + '/' + name)):
+        if (not Path(repoPath).exists()):
             # path not exist
             is_new = True
             print(' - Clone: ', end='', flush=True)
             detail_message += ' - Clone: '
             # clone repository
-            source_clone[3] = source
-            source_clone[4] = name
-            git = subprocess.Popen(
-                source_clone, cwd=path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            (git_status, git_error) = git.communicate()
-            if git.poll() == 0:
-                # clone executed
+            git.Git(path).clone(source, ['--mirror', name])
+            # clone executed
+            print('OK', end='', flush=True)
+            detail_message += 'OK'
+            print(' - Config: ', end='', flush=True)
+            detail_message += ' - Config: '
+            # set new destination
+            if destination.lower() != 'off':
+                repo = git.Repo(repoPath)
+                repo.remotes.origin.set_url(destination, ['--push'])
                 print('OK', end='', flush=True)
                 detail_message += 'OK'
-                print(' - Config: ', end='', flush=True)
-                detail_message += ' - Config: '
-                # set new destination
-                if destination.lower() != 'off':
-                    source_destination[5] = destination
-                    git = subprocess.Popen(source_destination, cwd=path_project,
-                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                    (git_status, git_error) = git.communicate()
-                    if git.poll() == 0:
-                        print('OK', end='', flush=True)
-                        detail_message += 'OK'
-                    else:
-                        raise IOError()
-                else:
-                    print('OFF', end='', flush=True)
-                    detail_message += 'OFF'
             else:
-                raise IOError()
+                print('OFF', end='', flush=True)
+                detail_message += 'OFF'
         # fetch from source
         if (not only_new or (only_new and is_new)):
             print(' - Fetch: ', end='', flush=True)
             detail_message += ' - Fetch: '
-            git = subprocess.Popen(source_fetch, cwd=path_project,
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            (git_status, git_error) = git.communicate()
-            if git.poll() == 0:
+            repo = git.Repo(repoPath)
+            origin = repo.remotes.origin
+            response = origin.fetch()[0]
+            if not (response.flags & git.FetchInfo.ERROR or response.flags & git.FetchInfo.REJECTED):
                 # fetch executed
                 print('OK', end='', flush=True)
                 detail_message += 'OK'
                 print(' - Push: ', end='', flush=True)
                 detail_message += ' - Push: '
                 if destination.lower() != 'off':
-                    git = subprocess.Popen(destination_push, cwd=path_project,
-                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                    (git_status, git_error) = git.communicate()
-                    if git.poll() == 0:
+                    response = origin.push()[0]
+                    if not (response.flags & git.PushInfo.ERROR or response.flags & git.PushInfo.REJECTED or response.flags & git.PushInfo.REMOTE_FAILURE or response.flags & git.PushInfo.REMOTE_REJECTED):
                         print('OK')
                         detail_message += 'OK'
                     else:
