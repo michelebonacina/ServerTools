@@ -203,3 +203,72 @@ Now is awailable only authenticated access to ad SSL SMTP mail server.
 
 ##### mail_to
 The email address list pf the destination users.
+
+## Mirror check
+Checks database replica alignment for a mysql db replica.
+Connect to db master and slave e check counter for verifying replica alignment. 
+If database not aligned, sends an error email.
+
+Needed pyhon 3.x or more
+
+### mysqlmirror.py
+The tool main program for mysql replica check.
+
+`python3 mysqlmirror.py`
+
+Connects either to master and slave database and checks replica status.
+
+### mysqlmirrorcfg.py
+The tool configuration file.
+
+##### db_master.server
+Server name or IP of the mysql master.
+
+##### db_master.port
+Port of the mysql master.
+
+##### db_master.user
+Username for accessing the mysql master.
+
+##### db_master.password
+Password for accessing the mysql master.
+
+##### db_slave.server
+Server name or IP of the mysql slave.
+
+##### db_slave.port
+Port of the mysql slave.
+
+##### db_slave.user
+Username for accessing the mysql slave.
+
+##### db_slave.password
+Password for accessing the mysql slave.
+
+##### mail.server
+The mail server name or IP address.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail.port
+The port of the mail server.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail.user
+The username used for mail server authentication.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail.password
+The password user for mail server authentication.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail.from
+The email address of the sender.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail.to
+The email address list pf the destination users.
