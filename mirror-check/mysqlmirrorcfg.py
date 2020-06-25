@@ -13,6 +13,12 @@ config = {
             'user': '',
             'password': '',
         },
+    'table_compare':[
+        {
+            'database': '',
+            'table': '',
+        }
+    ],
     'mail':
         {
             'server': '',
@@ -22,5 +28,4 @@ config = {
             'from': '',
             'to': ['']
         }
-
 }
