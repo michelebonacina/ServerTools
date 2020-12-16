@@ -5,6 +5,8 @@ A set of tools for managing and monitoring a server state.
 
 [DB mySQL Backup](##db-mysql-backup)
 
+[Dir Backup](##dir-backup)
+
 [Git Mirror](#git-mirror)
 
 ## Server check
@@ -103,6 +105,80 @@ The directory where the database dump file will be saved
 
 ##### filename_prefix
 The prefix for the file name, next to the current date. 
+
+##### backup_file_history
+The number of days of the backup history. Each time a backup starts, checks for backup files older the this values 
+(based on the backup date in the file name) and deletes them.
+
+##### weekly_backup
+Activate weekly backup. Every sunday backup is mantained for one week.
+
+##### monthly_backup
+Activate monthly backup. Every first day of month backup is mantained till the next month.
+
+##### yearly_backup
+Activate yearly backup. Every first day of year backup is mantained till the next year.
+
+##### mail_server
+The mail server name or IP address.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail_server_port
+The port of the mail server.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail_server_user
+The username used for mail server authentication.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail_server_password
+The password user for mail server authentication.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail_from
+The email address of the sender.
+
+Now is awailable only authenticated access to ad SSL SMTP mail server.
+
+##### mail_to
+The email address list pf the destination users.
+
+
+## Dir Backup
+Backup dirs into a zip file.
+
+Needed pyhon 3.x or more
+
+### mysqlbackup.py
+Backup main program.
+
+`python3 dirbackup.py`
+
+For each dir in config file calls create a zipfile into the export directory.
+
+At the end send a report email with backup details.
+
+### dirbackupcfg.py
+Backup configuration file.
+
+##### dir_to_backup
+The list of the dirs to backup.
+
+It's a standard array of objects which one is a dir to backup.
+
+Each object contains:
+- path: the backup dir full path
+- filename: the name of the zipfile to create (other infos will be added)
+
+##### export_dir
+The directory where the zipfile will be saved
+
+##### filename_prefix
+The prefix for the filename, next to the current date. 
 
 ##### backup_file_history
 The number of days of the backup history. Each time a backup starts, checks for backup files older the this values 
