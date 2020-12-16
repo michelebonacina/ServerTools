@@ -108,6 +108,15 @@ The prefix for the file name, next to the current date.
 The number of days of the backup history. Each time a backup starts, checks for backup files older the this values 
 (based on the backup date in the file name) and deletes them.
 
+##### weekly_backup
+Activate weekly backup. Every sunday backup is mantained for one week.
+
+##### monthly_backup
+Activate monthly backup. Every first day of month backup is mantained till the next month.
+
+##### yearly_backup
+Activate yearly backup. Every first day of year backup is mantained till the next year.
+
 ##### mail_server
 The mail server name or IP address.
 
