@@ -64,7 +64,7 @@ if (os.path.exists(export_dir) and os.path.isdir(export_dir)):
             dump_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + server + '_' + db_name + '.sql.gz'
             log_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + server + '_' + db_name + '.log'
             # dump db
-            result = os.system('mysqldump -u ' + user + ' -p' + password + ' -h ' + server + ' -P ' + port + ' ' +
+            result = os.system('MYSQL_PWD=' + password + ' mysqldump -u ' + user + ' -h ' + server + ' -P ' + port + ' ' +
                                db_name + ' 2> ' + export_dir + '/' + log_name + ' | gzip > ' + export_dir + '/' + dump_name)
             # prepare result message
             end_time = datetime.now()
