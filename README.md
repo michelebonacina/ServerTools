@@ -100,8 +100,17 @@ Each object contains:
 - password: database user password
 - db_names: a standard array of string with the name of the single database to backup
 
-##### export_dir
-The directory where the database dump file will be saved
+##### tmp_export_dir
+The temporary directory where the database dump files are saved. All files in this directory are deleted before dumping the database.
+
+##### backup_dir
+The final directory where the database dump are copied, if final copy is enabled. The old files are deleted from this directory before dumping the database.
+
+##### backup_dir_copy
+If True, the database dump files are copied to destination.
+
+##### backup_dir_copy_cmd
+The system command used to copy dump files to destination. This command must contains the pattern `[dump_file]` which is replaced with the file name.
 
 ##### filename_prefix
 The prefix for the file name, next to the current date. 
