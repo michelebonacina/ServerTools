@@ -3,6 +3,7 @@ config = {
         {
             'path': '',
             'filename': '',
+            'split_dir': False
         }
     ],
     'export_dir': '',

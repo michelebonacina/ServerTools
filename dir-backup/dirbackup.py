@@ -2,6 +2,7 @@ import os
 import smtplib
 import ssl
 import socket
+from zipfile import ZipFile
 from datetime import date, datetime
 from shutil import copyfile, make_archive
 
@@ -21,6 +22,35 @@ mail_server_user = config['mail_server_user']
 mail_server_password = config['mail_server_password']
 mail_from = config['mail_from']
 mail_to = config['mail_to']
+
+def make_zip(path, filename):
+    # get global variables
+    global export_dir, filename_prefix
+    global weekly_backup, monthly_backup, yearly_backup
+    global esito, detail_messages
+
+    # prepare dump name
+    start_time = datetime.now()
+    dump_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + filename 
+    # zip dir
+    dump_name = make_archive(export_dir + '/' + dump_name, 'zip', path)
+    # prepare result message
+    end_time = datetime.now()
+    message = 'Backup della dir ' + path + ' nel file ' + dump_name + '.'
+    # success
+    esito = 'OK'
+    detail_messages.append(message + ' OK!')
+    if (weekly_backup == True and current_date.weekday() == 6):
+        # copy to weekly file
+        copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_weekly-' + filename_prefix + '_' + filename + '.zip')
+    if (monthly_backup == True and current_date.day == 1):
+        # copy to monthly file
+        copyfile(dump_name, start_time.strftime('%Y%m%d') + 'monthly-' + filename_prefix + '_' + filename + '.zip')
+    if (yearly_backup == True and current_date.day == 1 and current_date.month == 1):
+        # copy to yearly file
+        copyfile(dump_name, start_time.strftime('%Y%m%d') + 'yearly-' + filename_prefix + '_' + filename + '.zip')
+    detail_messages.append('Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') +
+                            ' - Dimensione: ' + str(os.path.getsize(dump_name)) + '\n')
 
 # prepare result message
 detail_messages = []
@@ -55,32 +85,53 @@ if (os.path.exists(export_dir) and os.path.isdir(export_dir)):
         # get dir data
         path = dir_data['path']
         filename = dir_data['filename']
-        # prepare dump name
-        start_time = datetime.now()
-        dump_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + filename 
-        # zip dir
-        dump_name = make_archive(export_dir + '/' + dump_name, 'zip', path)
-        # prepare result message
-        end_time = datetime.now()
-        message = 'Backup della dir ' + path + ' nel file ' + dump_name + '.'
-        # success
-        esito = 'OK'
-        detail_messages.append(message + ' OK!')
-        if (weekly_backup == True and current_date.weekday() == 6):
-            # copy to weekly file
-            copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_weekly-' + filename_prefix + '_' + filename + '.zip')
-        if (monthly_backup == True and current_date.day == 1):
-            # copy to monthly file
-            copyfile(dump_name, start_time.strftime('%Y%m%d') + 'monthly-' + filename_prefix + '_' + filename + '.zip')
-        if (yearly_backup == True and current_date.day == 1 and current_date.month == 1):
-            # copy to yearly file
-            copyfile(dump_name, start_time.strftime('%Y%m%d') + 'yearly-' + filename_prefix + '_' + filename + '.zip')
-        detail_messages.append('Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') +
-                                ' - Dimensione: ' + str(os.path.getsize(dump_name)) + '\n')
+        split_dir = dir_data['split_dir']
+        # check directory split
+        if (split_dir) :
+            # zip single sub directory
+            # extract sub directory list and file in specified path
+            subdir_list = []
+            filename_list = []
+            for (dirpath, dirnames, filenames) in os.walk(path):
+                subdir_list.extend(dirnames)
+                filename_list.extend(filenames)
+                break           
+            # create temporary directory for single files
+            if (len(filenames) > 0):
+                # prepare dump name
+                start_time = datetime.now()
+                dump_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + filename + '.zip'
+                # zip files in dir
+                zip_file = ZipFile(dump_name, 'w')
+                for filename_dir in filenames:
+                    zip_file.write(path + '/' + filename_dir, filename_dir);
+                # prepare result message
+                end_time = datetime.now()
+                message = 'Backup della dir ' + path + ' nel file ' + dump_name + '.'
+                # success
+                esito = 'OK'
+                detail_messages.append(message + ' OK!')
+                if (weekly_backup == True and current_date.weekday() == 6):
+                    # copy to weekly file
+                    copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_weekly-' + filename_prefix + '_' + filename + '.zip')
+                if (monthly_backup == True and current_date.day == 1):
+                    # copy to monthly file
+                    copyfile(dump_name, start_time.strftime('%Y%m%d') + 'monthly-' + filename_prefix + '_' + filename + '.zip')
+                if (yearly_backup == True and current_date.day == 1 and current_date.month == 1):
+                    # copy to yearly file
+                    copyfile(dump_name, start_time.strftime('%Y%m%d') + 'yearly-' + filename_prefix + '_' + filename + '.zip')
+                detail_messages.append('Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') +
+                                        ' - Dimensione: ' + str(os.path.getsize(dump_name)) + '\n')
+            # zip single sub directory
+            for subdir in subdir_list:
+                make_zip(path + '/' + subdir, filename + '_' + subdir)
+        else: 
+            make_zip(path, filename)
 else:
     # export dir not finded
     esito = 'ERRORE!!!'
     detail_messages.append('La directory di export ' + export_dir + ' non esiste.')
+
 
 # send email ####
 if len(detail_messages) > 0:
