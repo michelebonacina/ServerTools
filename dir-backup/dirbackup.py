@@ -97,13 +97,13 @@ if (os.path.exists(export_dir) and os.path.isdir(export_dir)):
                 filename_list.extend(filenames)
                 break           
             # create temporary directory for single files
-            if (len(filenames) > 0):
+            if (len(filename_list) > 0):
                 # prepare dump name
                 start_time = datetime.now()
                 dump_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + filename + '.zip'
                 # zip files in dir
-                zip_file = ZipFile(dump_name, 'w')
-                for filename_dir in filenames:
+                zip_file = ZipFile(export_dir + '/' + dump_name, 'w')
+                for filename_dir in filename_list:
                     zip_file.write(path + '/' + filename_dir, filename_dir);
                 # prepare result message
                 end_time = datetime.now()
