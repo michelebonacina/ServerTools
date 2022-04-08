@@ -142,6 +142,7 @@ try:
                     make_zip(path + '/' + subdir, filename + '_' + subdir)
             else: 
                 make_zip(path, filename)
+        logging.info('Fine backup: ' + datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
     else:
         # export dir not finded
         esito = 'ERRORE!!!'
@@ -168,7 +169,7 @@ if len(detail_messages) > 0:
         message.append('From: ' + mail_from)
         message.append('To: ' + ', '.join(mail_to))
         message.append('Backup delle dirs del server ' + socket.gethostname() + '\n')
-        message += detail_messages
+        message += [text.encode('utf-8') for text in detail_messages]
         message.append('')
         # send email
         server.sendmail(mail_from, mail_to, '\n'.join(message))
