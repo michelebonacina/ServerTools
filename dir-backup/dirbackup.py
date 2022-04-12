@@ -4,6 +4,7 @@ import ssl
 import socket
 import logging
 from zipfile import ZipFile
+from email.mime.text import MIMEText
 from datetime import date, datetime
 from shutil import copyfile, make_archive
 
@@ -164,13 +165,11 @@ if len(detail_messages) > 0:
         # log into server
         server.login(mail_server_user, mail_server_password)
         # prepare mail message
-        message = []
-        message.append('Subject: [' + socket.gethostname() + '] Backup delle dirs - Esito: ' + esito)
-        message.append('From: ' + mail_from)
-        message.append('To: ' + ', '.join(mail_to))
-        message.append('Backup delle dirs del server ' + socket.gethostname() + '\n')
-        message += [text.encode('utf-8') for text in detail_messages]
-        message.append('')
+        message = MIMEText('Backup delle dirs del server ' + socket.gethostname() + '\n' + '\n'.join(detail_messages), 'plain', 'utf-8')
+        message['Subject'] = '[' + socket.gethostname() + '] Backup delle dirs - Esito: ' + esito
+        message['From'] = mail_from
+        message['To'] =', '.join(mail_to)
         # send email
-        server.sendmail(mail_from, mail_to, '\n'.join(message))
+        server.send_message(message)
+        server.quit()
 logging.info('Fine backup: ' + datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
