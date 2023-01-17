@@ -76,7 +76,7 @@ if (os.path.exists(tmp_export_dir) and os.path.isdir(tmp_export_dir)):
                 dump_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + server + '_' + db_name + '.sql.gz'
                 log_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + server + '_' + db_name + '.log'
                 # dump db
-                result = os.system('mysqldump -u ' + user + ' -p' + password + ' -h ' + server + ' -P ' + port + ' ' +
+                result = os.system('mysqldump --no-tablespaces --column-statistics=0 -u ' + user + ' -p' + password + ' -h ' + server + ' -P ' + port + ' ' +
                                    db_name + ' 2> ' + tmp_export_dir + '/' + log_name + ' | gzip > ' + tmp_export_dir + '/' + dump_name)
                 # prepare result message
                 message = 'Backup del db ' + db_name + ' dal server ' + server + '.'
@@ -86,6 +86,7 @@ if (os.path.exists(tmp_export_dir) and os.path.isdir(tmp_export_dir)):
                     detail_messages.append(message + ' ERRORE!!!!')
                 else:
                     # success
+                    os.system('grep -v \'Using a password on the command line interface can be insecure\' ' + tmp_export_dir + '/' + log_name + ' > ' +  tmp_export_dir + '/' + log_name)
                     # check log file
                     log_size = os.path.getsize(tmp_export_dir + '/' + log_name)
                     if log_size > 0:
