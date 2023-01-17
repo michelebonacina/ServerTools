@@ -51,10 +51,10 @@ def make_zip(path, filename):
         copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_weekly-' + filename_prefix + '_' + filename + '.zip')
     if (monthly_backup == True and current_date.day == 1):
         # copy to monthly file
-        copyfile(dump_name, start_time.strftime('%Y%m%d') + 'monthly-' + filename_prefix + '_' + filename + '.zip')
+        copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_monthly-' + filename_prefix + '_' + filename + '.zip')
     if (yearly_backup == True and current_date.day == 1 and current_date.month == 1):
         # copy to yearly file
-        copyfile(dump_name, start_time.strftime('%Y%m%d') + 'yearly-' + filename_prefix + '_' + filename + '.zip')
+        copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_yearly-' + filename_prefix + '_' + filename + '.zip')
     message = 'Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') + ' - Dimensione: ' + str(os.path.getsize(dump_name))
     logging.info(message)
     detail_messages.append(message + '\n')
@@ -98,7 +98,7 @@ try:
             path = dir_data['path']
             filename = dir_data['filename']
             split_dir = dir_data['split_dir']
-            logging.debug('path: '+ path + ' - filename: ' + filename + ' - split_dir: ' + split_dir)
+            logging.debug('path: '+ path + ' - filename: ' + filename + ' - split_dir: ' + str(split_dir))
             # check directory split
             if (split_dir) :
                 # zip single sub directory
