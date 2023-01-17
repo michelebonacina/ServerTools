@@ -15,6 +15,7 @@ dir_to_backup = config['dir_to_backup']
 export_dir = config['export_dir']
 filename_prefix = config['filename_prefix']
 backup_file_history = config['backup_file_history']
+log_file_history = config['log_file_history']
 weekly_backup = config['weekly_backup']
 monthly_backup = config['monthly_backup']
 yearly_backup = config['yearly_backup']
@@ -77,8 +78,14 @@ try:
             item_path = export_dir + '/' + item
             if (os.path.isfile(item_path)):
                 # is a file
+                if (item.find('-dirbackup.log') != -1):
+                    # is a log file
+                    file_date = date.fromtimestamp(os.path.getctime(item_path))
+                    if ((current_date - file_date).days > log_file_history):
+                        # the file is old, remove it
+                        os.remove(item_path)
                 if (item.find('_daily-' + filename_prefix + '_') != -1):
-                    # is a mysql daily backup file
+                    # is a daily backup file
                     file_date = date.fromtimestamp(os.path.getctime(item_path))
                     if ((current_date - file_date).days > backup_file_history):
                         # the file is old, remove it
