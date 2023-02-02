@@ -37,7 +37,7 @@ def make_zip(path, filename):
     # prepare dump name
     start_time = datetime.now()
     dump_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + filename 
-    dump_name = export_dir + '/' + dump_name
+    dump_name = export_dir + os.path.sep + dump_name
     # zip dir
     dump_name = make_archive(dump_name, 'zip', path)
     # prepare result message
@@ -49,13 +49,13 @@ def make_zip(path, filename):
     detail_messages.append(message + ' OK!')
     if (weekly_backup == True and current_date.weekday() == 6):
         # copy to weekly file
-        copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_weekly-' + filename_prefix + '_' + filename + '.zip')
+        copyfile(dump_name, export_dir + os.path.sep + start_time.strftime('%Y%m%d') + '_weekly-' + filename_prefix + '_' + filename + '.zip')
     if (monthly_backup == True and current_date.day == 1):
         # copy to monthly file
-        copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_monthly-' + filename_prefix + '_' + filename + '.zip')
+        copyfile(dump_name, export_dir + os.path.sep + start_time.strftime('%Y%m%d') + '_monthly-' + filename_prefix + '_' + filename + '.zip')
     if (yearly_backup == True and current_date.day == 1 and current_date.month == 1):
         # copy to yearly file
-        copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_yearly-' + filename_prefix + '_' + filename + '.zip')
+        copyfile(dump_name, export_dir + os.path.sep + start_time.strftime('%Y%m%d') + '_yearly-' + filename_prefix + '_' + filename + '.zip')
     message = 'Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') + ' - Dimensione: ' + str(os.path.getsize(dump_name))
     logging.info(message)
     detail_messages.append(message + '\n')
@@ -67,7 +67,7 @@ esito = ''
 try:
     if (os.path.exists(export_dir) and os.path.isdir(export_dir)):
         # initialize logging
-        logging.basicConfig(filename=export_dir + '/' + datetime.now().strftime('%Y%m%d-%H%M%S') + '-dirbackup.log', encoding='utf-8', level=logging.INFO)
+        logging.basicConfig(filename=export_dir + os.path.sep + datetime.now().strftime('%Y%m%d-%H%M%S') + '-dirbackup.log', encoding='utf-8', level=logging.INFO)
         logging.info('Inizio backup: ' + datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
         # export dir exists
         # remove old file from export dir ####
@@ -75,7 +75,7 @@ try:
         current_date = date.today()
         for item in os.listdir(export_dir):
             # check dir content
-            item_path = export_dir + '/' + item
+            item_path = export_dir + os.path.sep + item
             if (os.path.isfile(item_path)):
                 # is a file
                 if (item.find('-dirbackup.log') != -1):
@@ -121,11 +121,11 @@ try:
                     # prepare dump name
                     start_time = datetime.now()
                     dump_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + filename + '.zip'
-                    dump_name = export_dir + '/' + dump_name
+                    dump_name = export_dir + os.path.sep + dump_name
                     # zip files in dir
                     zip_file = ZipFile(dump_name, 'w')
                     for filename_dir in filename_list:
-                        zip_file.write(path + '/' + filename_dir, filename_dir);
+                        zip_file.write(path + os.path.sep + filename_dir, filename_dir);
                     # prepare result message
                     end_time = datetime.now()
                     message = 'Backup della dir ' + path + ' nel file ' + dump_name + '.'
@@ -135,19 +135,19 @@ try:
                     detail_messages.append(message + ' OK!')
                     if (weekly_backup == True and current_date.weekday() == 6):
                         # copy to weekly file
-                        copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_weekly-' + filename_prefix + '_' + filename + '.zip')
+                        copyfile(dump_name, export_dir + os.path.sep + start_time.strftime('%Y%m%d') + '_weekly-' + filename_prefix + '_' + filename + '.zip')
                     if (monthly_backup == True and current_date.day == 1):
                         # copy to monthly file
-                        copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_monthly-' + filename_prefix + '_' + filename + '.zip')
+                        copyfile(dump_name, export_dir + os.path.sep + start_time.strftime('%Y%m%d') + '_monthly-' + filename_prefix + '_' + filename + '.zip')
                     if (yearly_backup == True and current_date.day == 1 and current_date.month == 1):
                         # copy to yearly file
-                        copyfile(dump_name, export_dir + '/' + start_time.strftime('%Y%m%d') + '_yearly-' + filename_prefix + '_' + filename + '.zip')
+                        copyfile(dump_name, export_dir + os.path.sep + start_time.strftime('%Y%m%d') + '_yearly-' + filename_prefix + '_' + filename + '.zip')
                     message = 'Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') + ' - Dimensione: ' + str(os.path.getsize(dump_name))
                     logging.info(message)
                     detail_messages.append(message + '\n')
                 # zip single sub directory
                 for subdir in subdir_list:
-                    make_zip(path + '/' + subdir, filename + '_' + subdir)
+                    make_zip(path + os.path.sep + subdir, filename + '_' + subdir)
             else: 
                 make_zip(path, filename)
         logging.info('Fine backup: ' + datetime.now().strftime('%d-%m-%Y %H:%M:%S'))

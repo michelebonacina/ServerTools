@@ -47,7 +47,7 @@ for repository in repositories:
     path = repository['path']
     source = repository['source']
     destination = repository['destination']
-    repoPath = path + '/' + name
+    repoPath = path + os.path.sep + name
     print('Repo: ' + name, end='', flush=True)
     detail_message = 'Repo: ' + name
     is_new = False
