@@ -3,11 +3,13 @@ config = {
         {
             'path': '',
             'filename': '',
+            'split_dir': False
         }
     ],
     'export_dir': '',
     'filename_prefix': '',
     'backup_file_history': 3,
+    'log_file_history': 3,
     'weekly_backup': True,
     'monthly_backup': True,
     'yearly_backup': True,

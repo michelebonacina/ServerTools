@@ -37,7 +37,7 @@ if not backup_direct:
         # remove all file from temporary export dir
         for item in os.listdir(tmp_export_dir):
             # check dir content
-            item_path = tmp_export_dir + '/' + item
+            item_path = tmp_export_dir + os.path.sep + item
             if (os.path.isfile(item_path)):
                 # is a file, remove it
                 os.remove(item_path)
@@ -53,7 +53,7 @@ if not error:
         current_date = date.today()
         for item in os.listdir(backup_dir):
             # check dir content
-            item_path = backup_dir + '/' + item
+            item_path = backup_dir + os.path.sep + item
             if (os.path.isfile(item_path)):
                 # is a file
                 if (item.find('_daily-' + filename_prefix + '_') != -1):
@@ -86,8 +86,8 @@ if not error:
                 dump_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + server + '_' + db_name + '.sql.gz'
                 log_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + server + '_' + db_name + '.log'
                 # dump db
-                result = os.system('mysqldump -u ' + user + ' -p' + password + ' -h ' + server + ' -P ' + port + ' ' +
-                                    db_name + ' 2> ' + export_dir + '/' + log_name + ' | gzip > ' + export_dir + '/' + dump_name)
+                result = os.system('mysqldump --no-tablespaces --column-statistics=0 -u ' + user + ' -p' + password + ' -h ' + server + ' -P ' + port + ' ' +
+                                    db_name + ' 2> ' + export_dir + os.path.sep + log_name + ' | gzip > ' + export_dir + os.path.sep + dump_name)
                 # prepare result message
                 message = 'Backup del db ' + db_name + ' dal server ' + server + '.'
                 if result != 0:
@@ -96,8 +96,9 @@ if not error:
                     detail_messages.append(message + ' ERRORE!!!!')
                 else:
                     # success
+                    os.system('grep -v \'Using a password on the command line interface can be insecure\' ' + tmp_export_dir + os.path.sep + log_name + ' > ' +  tmp_export_dir + os.path.sep + log_name)
                     # check log file
-                    log_size = os.path.getsize(export_dir + '/' + log_name)
+                    log_size = os.path.getsize(export_dir + os.path.sep + log_name)
                     if log_size > 0:
                         # error
                         error = True
@@ -109,7 +110,7 @@ if not error:
                         # copy dump file to destination dir
                         if (backup_dir_copy == True):
                             # copy dump file to destination dir
-                            sys_command = backup_dir_copy_cmd.replace('[dump_file]', export_dir + '/' + dump_name)
+                            sys_command = backup_dir_copy_cmd.replace('[dump_file]', export_dir + os.path.sep + dump_name)
                             result = os.system(sys_command)
                             message = 'Copia del dump file ' + db_name + '.'
                             if result != 0:
@@ -121,7 +122,7 @@ if not error:
                                 error = False
                                 detail_messages.append(message + ' OK!')
                             # copy log file to destination dir
-                            sys_command = backup_dir_copy_cmd.replace('[dump_file]', export_dir + '/' + log_name)
+                            sys_command = backup_dir_copy_cmd.replace('[dump_file]', export_dir + os.path.sep + log_name)
                             result = os.system(sys_command)
                             message = 'Copia del log file ' + db_name + '.'
                             if result != 0:
@@ -138,7 +139,7 @@ if not error:
                                 os.rename(dump_name, new_name)
                                 dump_name = new_name
                                 # copy file to destination dir
-                                sys_command = backup_dir_copy_cmd.replace('[dump_file]', export_dir + '/' + dump_name)
+                                sys_command = backup_dir_copy_cmd.replace('[dump_file]', export_dir + os.path.sep + dump_name)
                                 result = os.system(sys_command)
                                 message = 'Copia del dump file settimanale ' + db_name + '.'
                                 if result != 0:
@@ -155,7 +156,7 @@ if not error:
                                 os.rename(dump_name, new_name)
                                 dump_name = new_name
                                 # copy file to destination dir
-                                sys_command = backup_dir_copy_cmd.replace('[dump_file]', export_dir + '/' + dump_name)
+                                sys_command = backup_dir_copy_cmd.replace('[dump_file]', export_dir + os.path.sep + dump_name)
                                 result = os.system(sys_command)
                                 message = 'Copia del dump file mensile ' + db_name + '.'
                                 if result != 0:
@@ -172,7 +173,7 @@ if not error:
                                 os.rename(dump_name, new_name)
                                 dump_name = new_name
                                 # copy file to destination dir
-                                sys_command = backup_dir_copy_cmd.replace('[dump_file]', export_dir + '/' + dump_name)
+                                sys_command = backup_dir_copy_cmd.replace('[dump_file]', export_dir + os.path.sep + dump_name)
                                 result = os.system(sys_command)
                                 message = 'Copia del dump file annuale ' + db_name + '.'
                                 if result != 0:
@@ -190,7 +191,7 @@ if not error:
                                 os.remove(export_dir + '/' + log_name)
                 end_time = datetime.now()
                 detail_messages.append('Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') +
-                                        ' - Dimensione: ' + str(os.path.getsize(export_dir + '/' + dump_name)) + '\n')                
+                                        ' - Dimensione: ' + str(os.path.getsize(export_dir + os.path.sep + dump_name)) + '\n')                
     else:
         # backup dir not fouded
         error = True    

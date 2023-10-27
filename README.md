@@ -182,6 +182,7 @@ It's a standard array of objects which one is a dir to backup.
 Each object contains:
 - path: the backup dir full path
 - filename: the name of the zipfile to create (other infos will be added)
+- split_dir: True - zip path sub dirs as single zip file and main dir with only simple file, False - zip path directly
 
 ##### export_dir
 The directory where the zipfile will be saved
