@@ -8,6 +8,7 @@ config = {
             'db_names': ['']
         }
     ],
+    'backup_direct': True,
     'tmp_export_dir': '',
     'backup_dir': '',
     'backup_dir_copy': True,
