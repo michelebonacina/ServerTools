@@ -71,6 +71,13 @@ if not error:
                 if (current_date.day == 1 and current_date.month == 1 and item.find('_yearly-' + filename_prefix + '_') != -1):
                     # the yearly file is old, remove it
                     os.remove(item_path)
+        # remove old temp backup
+        if not backup_direct: 
+            if (os.path.exists(tmp_export_dir) and os.path.isdir(tmp_export_dir)):
+                for item in os.listdir(tmp_export_dir):
+                    # remove files from temporary export dir
+                    if not item.endswith('_tmp'):
+                        os.remove(export_dir + os.path.sep + item)
         # backup dbs
         for db in db_to_backup:
             # get db data
@@ -86,8 +93,8 @@ if not error:
                 dump_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + server + '_' + db_name + '.sql.gz'
                 log_name = start_time.strftime('%Y%m%d') + '_daily-' + filename_prefix + '_' + server + '_' + db_name + '.log'
                 # dump db
-                result = os.system('mysqldump --no-tablespaces --column-statistics=0 -u ' + user + ' -p' + password + ' -h ' + server + ' -P ' + port + ' ' +
-                                    db_name + ' 2> ' + export_dir + os.path.sep + log_name + ' | gzip > ' + export_dir + os.path.sep + dump_name)
+                result = os.system('mysqldump --no-tablespaces -u ' + user + ' -p' + password + ' -h ' + server + ' -P ' + port + ' ' +
+                                    db_name + ' 2> ' + export_dir + os.path.sep + log_name + '_tmp | gzip > ' + export_dir + os.path.sep + dump_name)
                 # prepare result message
                 message = 'Backup del db ' + db_name + ' dal server ' + server + '.'
                 if result != 0:
@@ -96,7 +103,7 @@ if not error:
                     detail_messages.append(message + ' ERRORE!!!!')
                 else:
                     # success
-                    os.system('grep -v \'Using a password on the command line interface can be insecure\' ' + tmp_export_dir + os.path.sep + log_name + ' > ' +  tmp_export_dir + os.path.sep + log_name)
+                    os.system('grep -v \'Using a password on the command line interface can be insecure\' ' + tmp_export_dir + os.path.sep + log_name + '_tmp > ' +  tmp_export_dir + os.path.sep + log_name)
                     # check log file
                     log_size = os.path.getsize(export_dir + os.path.sep + log_name)
                     if log_size > 0:
@@ -187,8 +194,9 @@ if not error:
                         if not backup_direct: 
                             if (os.path.exists(tmp_export_dir) and os.path.isdir(tmp_export_dir)):
                                 # remove files from temporary export dir
-                                os.remove(export_dir + '/' + dump_name)
-                                os.remove(export_dir + '/' + log_name)
+                                os.remove(export_dir + os.path.sep + dump_name)
+                                os.remove(export_dir + os.path.sep + log_name)
+                                os.remove(export_dir + os.path.sep + log_name + '_tmp')
                 end_time = datetime.now()
                 detail_messages.append('Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') +
                                         ' - Dimensione: ' + str(os.path.getsize(export_dir + os.path.sep + dump_name)) + '\n')                
