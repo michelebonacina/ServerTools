@@ -194,12 +194,12 @@ if not error:
                         if not backup_direct: 
                             if (os.path.exists(tmp_export_dir) and os.path.isdir(tmp_export_dir)):
                                 # remove files from temporary export dir
-                                os.remove(export_dir + os.path.sep + dump_name)
-                                os.remove(export_dir + os.path.sep + log_name)
-                                os.remove(export_dir + os.path.sep + log_name + '_tmp')
+                                os.remove(tmp_export_dir + os.path.sep + dump_name)
+                                os.remove(tmp_export_dir + os.path.sep + log_name)
+                                os.remove(tmp_export_dir + os.path.sep + log_name + '_tmp')
                 end_time = datetime.now()
                 detail_messages.append('Inizio: ' + start_time.strftime('%d-%m-%Y %H:%M') + ' - Fine: ' + end_time.strftime('%d-%m-%Y %H:%M') +
-                                        ' - Dimensione: ' + str(os.path.getsize(export_dir + os.path.sep + dump_name)) + '\n')                
+                                        ' - Dimensione: ' + str(os.path.getsize(backup_dir + os.path.sep + dump_name)) + '\n')                
     else:
         # backup dir not fouded
         error = True    
