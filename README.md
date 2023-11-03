@@ -100,6 +100,9 @@ Each object contains:
 - password: database user password
 - db_names: a standard array of string with the name of the single database to backup
 
+##### backup_direct
+If True, the backup files are copied directly to mounted remote directory, otherwise are copied locally in tmp_export_dir and than to remote server via backup_dir_copy_cmd
+
 ##### tmp_export_dir
 The temporary directory where the database dump files are saved. All files in this directory are deleted before dumping the database.
 
