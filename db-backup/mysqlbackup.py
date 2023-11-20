@@ -44,7 +44,7 @@ if not backup_direct:
     else:
         # temprary export dir not fouded
         error = True
-        detail_messages.append('La directory temporanea di export ' + backup_dir + ' non esiste.')
+        detail_messages.append('La directory temporanea di export ' + tmp_export_dir + ' non esiste.')
 
 if not error:
     if (os.path.exists(backup_dir) and os.path.isdir(backup_dir)):
