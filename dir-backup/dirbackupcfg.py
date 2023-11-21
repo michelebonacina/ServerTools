@@ -6,6 +6,10 @@ config = {
             'split_dir': False
         }
     ],
+    'backup_direct': True,
+    'tmp_export_dir': '',
+    'backup_dir_copy': True,
+    'backup_dir_copy_cmd': '',
     'export_dir': '',
     'filename_prefix': '',
     'backup_file_history': 3,
