@@ -68,10 +68,11 @@ def make_zip(path, filename):
             error = False
             detail_messages.append(message + ' OK!')
         # delete temporary file
-        message = "Cancellazione del file temporaneo " + dump_name
-        os.remove(backup_dir + os.path.sep + dump_name)
-        error = False
-        detail_messages.append(message + ' OK!')
+        if (not error):
+            message = "Cancellazione del file temporaneo " + dump_name
+            os.remove(backup_dir + os.path.sep + dump_name)
+            error = False
+            detail_messages.append(message + ' OK!')
     if not error:
         if (weekly_backup == True and current_date.weekday() == 6):
             # copy to weekly file
@@ -86,6 +87,7 @@ def make_zip(path, filename):
         logging.info(message)
     detail_messages.append(message + '\n')
     logging.debug('make_zip end')
+    return error
 
 # prepare result message
 detail_messages = []
@@ -192,9 +194,9 @@ try:
                         detail_messages.append(message + '\n')
                     # zip single sub directory
                     for subdir in subdir_list:
-                        make_zip(path + os.path.sep + subdir, filename + '_' + subdir)
+                        error = error or make_zip(path + os.path.sep + subdir, filename + '_' + subdir)
                 else: 
-                    make_zip(path, filename)
+                    error = make_zip(path, filename)
             logging.info('Fine backup: ' + datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
         else:
             # export dir not finded
